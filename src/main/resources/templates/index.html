@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .intro-container {
+            text-align: center;
+            margin-top: 10%;
+        }
+    </style>
+</head>
+<body>
+    <div class="intro-container">
+        <p><button th:onclick="|location.href='@{/login}'|">로그인</button></p>
+        <p><button th:onclick="|location.href='@{/signup}'|">회원가입</button></p>
+    </div>
+</body>
+</html>
