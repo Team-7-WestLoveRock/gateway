@@ -1,6 +1,8 @@
 package com.nhnacademy.westloverock.gateway.controller;
 
-import com.nhnacademy.westloverock.gateway.domain.SignupRequest;
+import com.nhnacademy.westloverock.gateway.domain.SignupRegisterRequest;
+import com.nhnacademy.westloverock.gateway.service.AccountService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -9,19 +11,22 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
+@RequiredArgsConstructor
 public class MainViewController {
+    private final AccountService accountService;
     @GetMapping("/signup")
     public String signupForm(Model model) {
-        model.addAttribute("signupRequest", new SignupRequest());
+        accountService.fetchByUserId("G");
+        model.addAttribute("signupRequest", new SignupRegisterRequest());
         return "signupForm";
     }
 
     @PostMapping("/signup")
-    public String signup(@Validated SignupRequest req, BindingResult bindingResult) {
+    public String signup(@Validated SignupRegisterRequest req, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "signupForm";
         }
-        System.out.println(req);
+        accountService.registerAccount(req);
         return "redirect:/home";
     }
 

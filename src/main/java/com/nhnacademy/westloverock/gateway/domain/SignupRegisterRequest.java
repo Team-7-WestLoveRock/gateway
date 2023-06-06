@@ -13,7 +13,7 @@ import java.io.Serializable;
 
 @Getter @Setter
 @ToString
-public class SignupRequest implements Serializable {
+public class SignupRegisterRequest implements Serializable {
     @NotEmpty
     @Length(max = 45)
     private String userId;
@@ -25,6 +25,6 @@ public class SignupRequest implements Serializable {
     @Email
     @NotEmpty
     private String email;
-    @Pattern(regexp = "^[0-9]*$")
+    @Pattern(regexp = "^\\d*$")
     private String phoneNumber;
 }
