@@ -16,7 +16,6 @@ public class MainViewController {
     private final AccountService accountService;
     @GetMapping("/signup")
     public String signupForm(Model model) {
-        accountService.fetchByUserId("G");
         model.addAttribute("signupRequest", new SignupRegisterRequest());
         return "signupForm";
     }

@@ -16,8 +16,8 @@ import org.springframework.web.client.RestTemplate;
 import java.time.LocalDate;
 import java.util.Map;
 
-@Service
 @Setter
+@Service
 @RequiredArgsConstructor
 public class AccountService {
     private final RestTemplate restTemplate;
