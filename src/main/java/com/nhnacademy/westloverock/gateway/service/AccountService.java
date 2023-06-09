@@ -17,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.Map;
+import java.util.Optional;
 
 @Setter
 @Service
@@ -53,15 +54,23 @@ public class AccountService {
                 .getBody();
     }
 
-    public AccountUserIdOnly fetchByEmail(String primaryEmail) {
+    public Optional<AccountUserIdOnly> fetchByEmail(String primaryEmail) {
         String requestUrl = apiProperties.getAccountUrl() +
                 "/account/api/accounts/email/" +
                 primaryEmail;
-
-        return restTemplate.exchange(requestUrl,
+//        try {
+//            return Optional.ofNullable(restTemplate.exchange(requestUrl,
+//                            HttpMethod.GET,
+//                            HttpEntity.EMPTY,
+//                            AccountUserIdOnly.class)
+//                    .getBody());
+//        } catch (Throwable e) {
+//            return Optional.empty();
+//        }
+        return Optional.ofNullable(restTemplate.exchange(requestUrl,
                         HttpMethod.GET,
                         HttpEntity.EMPTY,
                         AccountUserIdOnly.class)
-                .getBody();
+                .getBody());
     }
 }
