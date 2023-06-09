@@ -2,6 +2,7 @@ package com.nhnacademy.westloverock.gateway.service;
 
 import com.nhnacademy.westloverock.gateway.config.ApiProperties;
 import com.nhnacademy.westloverock.gateway.domain.AccountDTO;
+import com.nhnacademy.westloverock.gateway.domain.AccountUserIdOnly;
 import com.nhnacademy.westloverock.gateway.domain.SignupRegisterRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -9,6 +10,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -23,7 +25,8 @@ public class AccountService {
     private final RestTemplate restTemplate;
     private final HttpHeaders httpHeaders;
     private final ApiProperties apiProperties;
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final ParameterizedTypeReference<Map<String, LocalDate>> CREATE_RESPONSE_TYPE = new ParameterizedTypeReference<>() {};
 
     public AccountDTO fetchByUserId(String username) {
         String requestUrl = apiProperties.getAccountUrl() +
@@ -46,8 +49,19 @@ public class AccountService {
         return restTemplate.exchange(requestUrl,
                         HttpMethod.POST,
                         httpEntity,
-                        new ParameterizedTypeReference<Map<String, LocalDate>>() {
-                        })
+                        CREATE_RESPONSE_TYPE)
+                .getBody();
+    }
+
+    public AccountUserIdOnly fetchByEmail(String primaryEmail) {
+        String requestUrl = apiProperties.getAccountUrl() +
+                "/account/api/accounts/email/" +
+                primaryEmail;
+
+        return restTemplate.exchange(requestUrl,
+                        HttpMethod.GET,
+                        HttpEntity.EMPTY,
+                        AccountUserIdOnly.class)
                 .getBody();
     }
 }

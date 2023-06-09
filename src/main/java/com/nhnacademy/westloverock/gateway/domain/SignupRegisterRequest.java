@@ -1,9 +1,7 @@
 package com.nhnacademy.westloverock.gateway.domain;
 
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
@@ -13,6 +11,7 @@ import java.io.Serializable;
 
 @Getter @Setter
 @ToString
+@NoArgsConstructor
 public class SignupRegisterRequest implements Serializable {
     @NotEmpty
     @Length(max = 45)
@@ -27,4 +26,14 @@ public class SignupRegisterRequest implements Serializable {
     private String email;
     @Pattern(regexp = "^\\d*$")
     private String phoneNumber;
+
+    @Builder
+    public SignupRegisterRequest(String userId, String password, String name, String nickname, String email, String phoneNumber) {
+        this.userId = userId;
+        this.password = password;
+        this.name = name;
+        this.nickname = nickname;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+    }
 }
