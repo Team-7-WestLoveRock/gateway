@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 @RequestMapping("minidooray")
 public class MainViewController {
-    @GetMapping("home")
+    @GetMapping({"", "home"})
     public String home() {
         return "home";
     }

@@ -11,10 +11,12 @@
 </head>
 <body>
     <div class="signup-container">
-        <form th:method="post" th:action="@{/signup}" th:object="${signupRequest}" >
+        <form th:method="post" th:action="@{/signup}" th:object="${signupRegisterRequest}" >
             <p>
                 <input name="userId" type="text" placeholder="아이디 (45자 이하)"/>
+                <p th:if="${not #strings.isEmpty(duplicationMessage)}" th:text="${duplicationMessage}">
                 <p th:each="item : ${#fields.errors('userId')}" th:text="${item}" class="error-message"/>
+                <button th:onclick="|location.href='@{/signup}'|">중복 검사</button>
             </p>
             <p>
                 <input name="password" type="password" placeholder="비밀번호"/>
@@ -24,13 +26,13 @@
                 <input name="name" type="text" placeholder="이름"/>
                 <p th:each="item : ${#fields.errors('name')}" th:text="${item}" class="error-message"/>
             </p>
-            <input name="nickname" type="text" placeholder="닉네임 (15자 이하)"/>
+                <input name="nickname" type="text" placeholder="닉네임 (15자 이하)"/>
             <p>
                 <input name="email" type="email" placeholder="이메일"/>
                 <p th:each="item : ${#fields.errors('email')}" th:text="${item}" class="error-message"/>
             </p>
-            <input name="phoneNumber" type="text" placeholder="휴대전화"/>
-            <p th:if="${not #strings.isEmpty(message)}"  th:text="${message}" class="error-message"/>
+                <input name="phoneNumber" type="text" placeholder="휴대전화"/>
+                <p th:if="${not #strings.isEmpty(message)}"  th:text="${message}" class="error-message"/>
             <p><button type="submit">회원가입</button></p>
         </form>
     </div>

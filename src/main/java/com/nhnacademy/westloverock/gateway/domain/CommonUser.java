@@ -1,28 +1,34 @@
 package com.nhnacademy.westloverock.gateway.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
+@Setter
+@NoArgsConstructor
+@JsonDeserialize
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CommonUser implements UserDetails, OAuth2User {
     private String username;
-    private Map<String, Object> attributes;
+    private HashMap<String, Object> attributes;
+    private Collection<? extends GrantedAuthority> authorities;
     public CommonUser(String username) {
         this.username = username;
     }
     public CommonUser(String username, Map<String, Object> attributes) {
         this.username = username;
-        this.attributes = attributes;
+        this.attributes = new LinkedHashMap<>(attributes);
     }
-
     @Override
     public String getName() {
-        return this.attributes.get("name").toString();
+        return this.attributes.getOrDefault("name","").toString();
     }
 
     @Override
@@ -34,10 +40,9 @@ public class CommonUser implements UserDetails, OAuth2User {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
     }
-
     @Override
     public String getPassword() {
-        return this.attributes.get("password").toString();
+        return this.attributes.getOrDefault("password", UUID.randomUUID()).toString();
     }
 
     @Override

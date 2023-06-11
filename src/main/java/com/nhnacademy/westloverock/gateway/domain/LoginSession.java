@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
-@RedisHash(value = "loginSession")
+@RedisHash(value = "loginSession", timeToLive = 3600)
 public class LoginSession implements Serializable {
     @Id
     private String userId;

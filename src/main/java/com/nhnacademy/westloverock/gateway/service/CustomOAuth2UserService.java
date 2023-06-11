@@ -29,11 +29,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final AccountService accountService;
     ParameterizedTypeReference<List<GitEmailDTO>> EMAILS_TYPE = new ParameterizedTypeReference<>() {};
 
-
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        Map<String, Object> attributes = new HashMap<>(oAuth2User.getAttributes());
+        HashMap<String, Object> attributes = new LinkedHashMap<>(oAuth2User.getAttributes());
 
         List<GitEmailDTO> response = fetchGitUserEmails(userRequest.getAccessToken());
         String primaryEmail = getPrimaryEmailIn(response);
