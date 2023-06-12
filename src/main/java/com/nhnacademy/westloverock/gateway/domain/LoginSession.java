@@ -11,13 +11,15 @@ import java.time.LocalDateTime;
 @RedisHash(value = "loginSession", timeToLive = 3600)
 public class LoginSession implements Serializable {
     @Id
+    private String sessionID;
     private String userId;
-    private LocalDateTime loginAt;
+    private LocalDateTime createdAt;
     private String ipAddress;
 
-    public LoginSession(String userId, String ipAddress) {
+    public LoginSession(String sessionID, String userId, String ipAddress) {
+        this.sessionID = sessionID;
         this.userId = userId;
-        this.loginAt = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
         this.ipAddress = ipAddress;
     }
 }

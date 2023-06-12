@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@ActiveProfiles("local")
+@ActiveProfiles("dev")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DataRedisTest
 class LoginSessionRedisRepositoryTest {
@@ -21,19 +21,20 @@ class LoginSessionRedisRepositoryTest {
     @Order(1)
     @DisplayName("등록 - 정상")
     void test1() {
-        LoginSession loginSession = new LoginSession("user1", "127.0.0.1");
+        LoginSession loginSession = new LoginSession("1", "user1", "127.0.0.1");
         LoginSession loginSession1 = repository.save(loginSession);
-        assertThat(loginSession1.getUserId()).isEqualTo(repository.findById(loginSession.getUserId()).get().getUserId());
+
+        assertThat(loginSession1.getSessionID()).isEqualTo(loginSession.getSessionID());
     }
 
     @Test
     @Order(2)
     @DisplayName("삭제 - 정상")
     void test2() {
-        LoginSession actual = new LoginSession("user1", "127.0.0.1");
+        LoginSession actual = new LoginSession("1", "user1", "127.0.0.1");
         LoginSession expect = repository.save(actual);
 
-        repository.deleteById("user1");
-        assertThat(repository.findById(expect.getUserId())).isEmpty();
+        repository.deleteById("1");
+        assertThat(repository.findById(expect.getSessionID())).isEmpty();
     }
 }

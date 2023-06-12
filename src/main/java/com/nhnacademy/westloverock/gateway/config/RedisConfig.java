@@ -9,11 +9,9 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.security.jackson2.CoreJackson2Module;
 import org.springframework.security.jackson2.SecurityJackson2Modules;
-import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 @Configuration
 @RequiredArgsConstructor
-@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 60)
 public class RedisConfig implements BeanClassLoaderAware {
     private ClassLoader classLoader;
     @Bean
