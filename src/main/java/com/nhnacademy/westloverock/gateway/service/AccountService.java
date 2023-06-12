@@ -31,22 +31,16 @@ public class AccountService {
     private static final String ACCOUNT_API_ACCOUNTS = "/account/api/accounts/";
     private static final ParameterizedTypeReference<Map<String, LocalDate>> CREATE_RESPONSE_TYPE = new ParameterizedTypeReference<>() {};
 
-    public Optional<AccountDTO> fetchByUserId(String username) {
+    public AccountDTO fetchByUserId(String username) {
         String requestUrl = apiProperties.getAccountUrl() +
                 ACCOUNT_API_ACCOUNTS +
                 username;
 
-        AccountDTO accountDTO = restTemplate.exchange(requestUrl,
+        return restTemplate.exchange(requestUrl,
                         HttpMethod.GET,
                         HttpEntity.EMPTY,
                         AccountDTO.class)
                 .getBody();
-
-        return Optional.ofNullable(restTemplate.exchange(requestUrl,
-                        HttpMethod.GET,
-                        HttpEntity.EMPTY,
-                        AccountDTO.class)
-                .getBody());
     }
 
     public Map<String, LocalDate> registerAccount(SignupRegisterRequest signupRegisterRequest) {

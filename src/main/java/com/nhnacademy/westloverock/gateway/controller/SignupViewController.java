@@ -40,11 +40,4 @@ public class SignupViewController {
         accountService.registerAccount(req);
         return "redirect:/minidooray";
     }
-
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-
-        session.invalidate();
-        return "redirect:/";
-    }
 }

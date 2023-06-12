@@ -13,7 +13,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 
 @Configuration
 @RequiredArgsConstructor
-@EnableRedisHttpSession
+@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 60)
 public class RedisConfig implements BeanClassLoaderAware {
     private ClassLoader classLoader;
     @Bean
