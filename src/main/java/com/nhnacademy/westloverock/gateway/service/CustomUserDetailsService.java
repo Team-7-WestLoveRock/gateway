@@ -22,10 +22,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final AccountService accountService;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AccountDTO account;
-        try {
-            account = accountService.fetchByUserId(username);
-        } catch (HttpClientErrorException e) {
+        AccountDTO account = accountService.fetchByUserId(username);
+        if (Objects.isNull(account)) {
             throw new UsernameNotFoundException(username + " not found");
         }
 

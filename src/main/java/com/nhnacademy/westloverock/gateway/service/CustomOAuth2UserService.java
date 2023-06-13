@@ -3,7 +3,7 @@ package com.nhnacademy.westloverock.gateway.service;
 import com.nhnacademy.westloverock.gateway.domain.AccountUserIdOnly;
 import com.nhnacademy.westloverock.gateway.domain.CommonUser;
 import com.nhnacademy.westloverock.gateway.domain.GitEmailDTO;
-import com.nhnacademy.westloverock.gateway.domain.SignupRegisterRequest;
+import com.nhnacademy.westloverock.gateway.domain.SignUpRegisterRequest;
 import com.nhnacademy.westloverock.gateway.exception.EmailNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,15 +27,14 @@ import java.util.*;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final AccountService accountService;
-    ParameterizedTypeReference<List<GitEmailDTO>> EMAILS_TYPE = new ParameterizedTypeReference<>() {};
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         HashMap<String, Object> attributes = new LinkedHashMap<>(oAuth2User.getAttributes());
 
-        List<GitEmailDTO> response = fetchGitUserEmails(userRequest.getAccessToken());
-        String primaryEmail = getPrimaryEmailIn(response);
+        List<GitEmailDTO> response = accountService.fetchGitUserEmails(userRequest.getAccessToken());
+        String primaryEmail = accountService.getPrimaryEmailIn(response);
 
         // primary email을 보고 이미 존재하는 회원인지 확인
         // NOTE: 아이디가 없으면 회원가입 시킴
@@ -47,7 +46,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             String oAuthBasedPassword = registrationId + "_" + UUID.randomUUID();
             String gitHubName = oAuth2User.getAttribute("name");
 
-            SignupRegisterRequest req = SignupRegisterRequest.builder()
+            SignUpRegisterRequest req = SignUpRegisterRequest.builder()
                     .userId(gitHubId)
                     .password(oAuthBasedPassword)
                     .name(gitHubName)
@@ -61,32 +60,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         } else {
             userId = userIdDTO.get().getUserId();
         }
-
         return new CommonUser(userId, attributes);
-    }
-
-    private List<GitEmailDTO> fetchGitUserEmails(OAuth2AccessToken accessToken) {
-        // NOTE: 일반적으로 OAuth를 통해 받은 값에서 email이 나타나지 않아 따로 이메일을 요청함
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
-        headers.setBearerAuth(accessToken.getTokenValue());
-
-        RestTemplate restTemplate = new RestTemplate();
-        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
-        return restTemplate.exchange(
-                        "https://api.github.com/user/emails",
-                        HttpMethod.GET,
-                        requestEntity,
-                        EMAILS_TYPE)
-                .getBody();
-    }
-
-    public String getPrimaryEmailIn(List<GitEmailDTO> emailDTOs) {
-        return emailDTOs.stream()
-                .filter(g -> g.getPrimary())
-                .findFirst()
-                .orElseThrow(EmailNotFoundException::new)
-                .getEmail();
     }
 }

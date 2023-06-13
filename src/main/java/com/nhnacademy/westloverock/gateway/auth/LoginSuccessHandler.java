@@ -26,6 +26,11 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
         session.setAttribute("username", commonUser.getUsername());
         session.setAttribute("ipAddress", request.getRemoteAddr());
 
+        String userStatus = commonUser.getAttributes().get("status").toString();
+        if (userStatus.equals("휴면")) {
+            response.sendRedirect("/dormancy");
+        }
+
         LoginSession loginSession = LoginSession.builder()
                 .sessionID(session.getId())
                 .userId(commonUser.getUsername())

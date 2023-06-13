@@ -28,7 +28,7 @@ public class LoginLogSaveLogoutHandler implements LogoutHandler {
 
         LoginLogSaveDTO loginLogSaveDTO = new LoginLogSaveDTO();
         loginLogSaveDTO.setIpAddress(ipAddress);
-//        loginSessionRedisRepository.deleteByUserId(userId);
+
         loginSessionRedisRepository.deleteById(session.getId());
         accountService.saveUserLoginLog(userId, loginLogSaveDTO);
     }

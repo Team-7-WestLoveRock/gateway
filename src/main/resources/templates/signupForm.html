@@ -11,12 +11,10 @@
 </head>
 <body>
     <div class="signup-container">
-        <form th:method="post" th:action="@{/signup}" th:object="${signupRegisterRequest}" >
+        <form th:method="post" th:action="@{/signup}" th:object="${signUpRegisterRequest}" >
             <p>
                 <input name="userId" type="text" placeholder="아이디 (45자 이하)"/>
-                <p th:if="${not #strings.isEmpty(duplicationMessage)}" th:text="${duplicationMessage}">
                 <p th:each="item : ${#fields.errors('userId')}" th:text="${item}" class="error-message"/>
-                <button th:onclick="|location.href='@{/signup}'|">중복 검사</button>
             </p>
             <p>
                 <input name="password" type="password" placeholder="비밀번호"/>
