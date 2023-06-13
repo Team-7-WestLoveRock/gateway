@@ -1,8 +1,5 @@
 package com.nhnacademy.westloverock.gateway.config;
 
-import com.nhnacademy.westloverock.gateway.auth.LoginLogSaveLogoutHandler;
-import com.nhnacademy.westloverock.gateway.auth.LoginSuccessHandler;
-import com.nhnacademy.westloverock.gateway.service.AccountService;
 import com.nhnacademy.westloverock.gateway.service.CustomOAuth2UserService;
 import com.nhnacademy.westloverock.gateway.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
@@ -23,26 +20,26 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 public class SecurityConfig {
     private final PasswordEncoder passwordEncoder;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final AuthenticationSuccessHandler loginSuccessHandler;
+    private final LogoutHandler logoutHandler;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests(req -> req
                         .antMatchers("/minidooray/**").authenticated()
                         .anyRequest().permitAll())
-                .formLogin(f -> f.successHandler(loginSuccessHandler()))
+                .formLogin(f -> f.successHandler(loginSuccessHandler))
                 .oauth2Login(o -> o.userInfoEndpoint()
                         .userService(customOAuth2UserService).and()
                         .defaultSuccessUrl("/minidooray")
-                        .successHandler(loginSuccessHandler()))
+                        .successHandler(loginSuccessHandler))
                 .logout(l -> l.logoutUrl("/logout")
-                        .addLogoutHandler(logoutHandler(null))
+                        .addLogoutHandler(logoutHandler)
                         .invalidateHttpSession(true)
                         .logoutSuccessUrl("/"))
                 .csrf()
                     .and()
                 .sessionManagement(s -> s.sessionFixation()
                         .newSession())
-                .exceptionHandling()
-                .and()
                 .build();
     }
 
@@ -53,15 +50,5 @@ public class SecurityConfig {
         authenticationProvider.setPasswordEncoder(passwordEncoder);
 
         return authenticationProvider;
-    }
-
-    @Bean
-    public AuthenticationSuccessHandler loginSuccessHandler() {
-        return new LoginSuccessHandler();
-    }
-
-    @Bean
-    public LogoutHandler logoutHandler(AccountService accountService) {
-        return new LoginLogSaveLogoutHandler(accountService);
     }
 }

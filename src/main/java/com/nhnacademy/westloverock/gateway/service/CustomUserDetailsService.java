@@ -33,7 +33,5 @@ public class CustomUserDetailsService implements UserDetailsService {
                 "email", account.getEmail()));
 
         return new CommonUser(account.getUserId(), attributes);
-
-
     }
 }
