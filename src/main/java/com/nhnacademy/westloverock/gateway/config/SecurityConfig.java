@@ -25,7 +25,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests(req -> req
-                        .antMatchers("/minidooray/**").authenticated()
+                        .antMatchers("/minidooray/**").hasRole("USER")
                         .anyRequest().permitAll())
                 .formLogin(f -> f.successHandler(loginSuccessHandler))
                 .oauth2Login(o -> o.userInfoEndpoint()

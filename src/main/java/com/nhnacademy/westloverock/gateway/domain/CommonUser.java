@@ -16,7 +16,7 @@ public class CommonUser implements UserDetails, OAuth2User {
     }
     @Override
     public String getName() {
-        return this.attributes.getOrDefault("name","").toString();
+        return this.attributes.getOrDefault("name", "").toString();
     }
 
     @Override
@@ -26,6 +26,9 @@ public class CommonUser implements UserDetails, OAuth2User {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (attributes.get("status").equals("DORMANCY")) {
+            return Collections.emptyList();
+        }
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
     }
     @Override

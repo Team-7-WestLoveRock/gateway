@@ -2,6 +2,8 @@ package com.nhnacademy.westloverock.gateway.service;
 
 import com.nhnacademy.westloverock.gateway.domain.AccountDTO;
 import com.nhnacademy.westloverock.gateway.domain.CommonUser;
+import com.nhnacademy.westloverock.gateway.exception.DormancyUserException;
+import com.nhnacademy.westloverock.gateway.exception.WithdrawalUserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -27,9 +29,16 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException(username + " not found");
         }
 
-        HashMap<String, Object> attributes = new LinkedHashMap<>(Map.of("password", account.getPassword(),
-                "email", account.getEmail()));
+        if (account.getState().equals("WITHDRAWAL")) {
+            throw new WithdrawalUserException(account.getUserId() + "는 탈퇴한 유저입니다.");
+        }
 
-        return new CommonUser(account.getUserId(), attributes);
+        Map<String, Object> userAdditionalInfo = new LinkedHashMap<>();
+
+        userAdditionalInfo.put("password", account.getPassword());
+        userAdditionalInfo.put("email", account.getEmail());
+        userAdditionalInfo.put("status", account.getState());
+
+        return new CommonUser(account.getUserId(), userAdditionalInfo);
     }
 }

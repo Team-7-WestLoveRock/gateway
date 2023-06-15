@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>error page</title>
@@ -7,5 +7,6 @@
 <body>
   <h1 th:text="${message}"/>
   <h1 th:text="${statusCode}"/>
+    <a th:if="${exception instanceof T(com.nhnacademy.westloverock.gateway.exception.DormancyUserException)}" th:href="@{/dormancy/unlock}">휴면 해제</a>
 </body>
 </html>

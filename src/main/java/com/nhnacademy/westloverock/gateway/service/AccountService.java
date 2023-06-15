@@ -3,9 +3,9 @@ package com.nhnacademy.westloverock.gateway.service;
 import com.nhnacademy.westloverock.gateway.config.ApiProperties;
 import com.nhnacademy.westloverock.gateway.domain.*;
 import com.nhnacademy.westloverock.gateway.exception.EmailNotFoundException;
+import com.nhnacademy.westloverock.gateway.util.APIResponseType;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,8 +29,6 @@ public class AccountService {
     private final ApiProperties apiProperties;
     private final PasswordEncoder passwordEncoder;
     private static final String ACCOUNT_API_ACCOUNTS = "/account/api/accounts/";
-    private static final ParameterizedTypeReference<Map<String, LocalDate>> CREATE_RESPONSE_TYPE = new ParameterizedTypeReference<>() {};
-    private static final ParameterizedTypeReference<List<GitEmailDTO>> EMAILS_TYPE = new ParameterizedTypeReference<>() {};
 
     public AccountDTO fetchByUserId(String username) {
         String requestUrl = apiProperties.getAccountUrl() +
@@ -55,13 +52,13 @@ public class AccountService {
         return restTemplate.exchange(requestUrl,
                         HttpMethod.POST,
                         httpEntity,
-                        CREATE_RESPONSE_TYPE)
+                        APIResponseType.CREATE_TYPE)
                 .getBody();
     }
 
     public Optional<AccountUserIdOnly> fetchByEmail(String primaryEmail) {
         String requestUrl = apiProperties.getAccountUrl() +
-                "/account/api/accounts/email/" +
+                ACCOUNT_API_ACCOUNTS + "email/" +
                 primaryEmail;
 
         return Optional.ofNullable(restTemplate.exchange(requestUrl,
@@ -83,7 +80,7 @@ public class AccountService {
                         "https://api.github.com/user/emails",
                         HttpMethod.GET,
                         requestEntity,
-                        EMAILS_TYPE)
+                        APIResponseType.EMAILS_TYPE)
                 .getBody();
     }
 
@@ -111,13 +108,25 @@ public class AccountService {
         restTemplate.exchange(requestUrl,
                 HttpMethod.POST,
                 httpEntity,
-                new ParameterizedTypeReference<Map<String, LocalDateTime>>() {
-                });
+                APIResponseType.LOGIN_LOG_TYPE);
+    }
+
+    public void changeAccountState(String userId, String state) {
+        String requestUrl = apiProperties.getAccountUrl() +
+                ACCOUNT_API_ACCOUNTS +
+                userId;
+
+        HttpEntity<Map<String, String>> httpEntity = new HttpEntity<>(Map.of("state", state), httpHeaders);
+
+        restTemplate.exchange(requestUrl,
+                HttpMethod.POST,
+                httpEntity,
+                APIResponseType.ACCOUNT_STATE_TYPE);
     }
 
     public String getPrimaryEmailIn(List<GitEmailDTO> emailDTOs) {
         return emailDTOs.stream()
-                .filter(g -> g.getPrimary())
+                .filter(GitEmailDTO::getPrimary)
                 .findFirst()
                 .orElseThrow(EmailNotFoundException::new)
                 .getEmail();

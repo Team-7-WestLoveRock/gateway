@@ -1,7 +1,7 @@
 package com.nhnacademy.westloverock.gateway.advice;
 
 import com.nhnacademy.westloverock.gateway.exception.DuplicateArgsException;
-import com.sun.jdi.request.DuplicateRequestException;
+import com.nhnacademy.westloverock.gateway.exception.UserIllegalStateException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -13,6 +13,14 @@ public class ViewControllerAdvice {
     public String duplicationExceptionHandler(HttpServletRequest request, DuplicateArgsException e) {
         request.setAttribute("message", e.getMessage());
         request.setAttribute("statusCode", e.getStatusCode());
+        return "error";
+    }
+
+    @ExceptionHandler(UserIllegalStateException.class)
+    public String illegalStateExceptionHandler(HttpServletRequest request, UserIllegalStateException e) {
+        request.setAttribute("message", e.getMessage());
+        request.setAttribute("statusCode", 403);
+        request.setAttribute("exception", e);
         return "error";
     }
 

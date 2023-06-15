@@ -2,6 +2,8 @@ package com.nhnacademy.westloverock.gateway.auth;
 
 import com.nhnacademy.westloverock.gateway.domain.CommonUser;
 import com.nhnacademy.westloverock.gateway.domain.LoginSession;
+import com.nhnacademy.westloverock.gateway.exception.DormancyUserException;
+import com.nhnacademy.westloverock.gateway.exception.WithdrawalUserException;
 import com.nhnacademy.westloverock.gateway.repository.LoginSessionRedisRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -27,9 +29,6 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
         session.setAttribute("ipAddress", request.getRemoteAddr());
 
         String userStatus = commonUser.getAttributes().get("status").toString();
-        if (userStatus.equals("휴면")) {
-            response.sendRedirect("/dormancy");
-        }
 
         LoginSession loginSession = LoginSession.builder()
                 .sessionID(session.getId())
@@ -38,6 +37,15 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
                 .build();
 
         loginSessionRedisRepository.save(loginSession);
+
+        if (userStatus.equals("DORMANCY")) {
+            request.setAttribute("message", "휴면 상태 확인");
+            request.setAttribute("statusCode", 403);
+            request.setAttribute("exception", new DormancyUserException("휴면 상태입니다."));
+            request.getRequestDispatcher("error").forward(request, response);
+            return;
+        }
+
         response.sendRedirect("/minidooray");
     }
 }
