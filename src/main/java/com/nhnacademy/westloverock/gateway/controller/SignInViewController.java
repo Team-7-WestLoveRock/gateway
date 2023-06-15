@@ -14,7 +14,7 @@ public class SignInViewController {
 
     @GetMapping("/signin/dormancy")
     public String changeStatusPage() {
-        return "dormancy";
+        return "auth/dormancy";
     }
 
     @GetMapping("/dormancy/unlock")

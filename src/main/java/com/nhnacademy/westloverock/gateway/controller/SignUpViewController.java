@@ -22,7 +22,7 @@ public class SignUpViewController {
     @GetMapping("/signup")
     public String signupForm(Model model) {
         model.addAttribute("signUpRegisterRequest", new SignUpRegisterRequest());
-        return "signupForm";
+        return "auth/signupForm";
     }
 
     @PostMapping("/signup")
@@ -31,7 +31,7 @@ public class SignUpViewController {
                          Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("signUpRegisterRequest", req);
-            return "signupForm";
+            return "auth/signupForm";
         }
 
         if (accountService.fetchUserIsExist(req.getUserId())) {
